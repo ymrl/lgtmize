@@ -1,0 +1,34 @@
+{
+  // Required
+  "manifest_version": 2,
+  "name": "LGTMize",
+  "version": "0.0.1",
+
+  // Recommended
+  //"default_locale": "ja",
+  "description": "Create Image from playing video",
+
+  // Optional
+  "author": "ymrl",
+  "background": {
+    // Recommended
+    "persistent": false,
+    "scripts": ["js/background.js"]
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["js/content.js"]
+    }
+  ],
+
+  "permissions": [
+    "http://*/*",
+    "https://*/*",
+    "tabs",
+    "contextMenus",
+    "storage",
+    "unlimitedStorage"
+  ]
+}
