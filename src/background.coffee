@@ -1,56 +1,20 @@
 LGTM_IMG = 'img/lgtm.png'
+ALBUM_HTML = 'html/album.html'
+Consts = require './consts'
+fileSystem = require('./lib/file_system')
+dispatcher = require('./dispatchers/dispatcher')
+actions = require('./actions/background_actions')
 
-createLGTM = (url) ->
-  load = new Promise (resolve, reject)->
-    sourceImg = document.createElement('img')
-    lgtmImg = document.createElement('img')
-    onLoad = ->
-      if sourceImg.complete && lgtmImg.complete
-        resolve
-          source: sourceImg
-          lgtm: lgtmImg
-    onError = (e)->
-      reject(e)
-    lgtmImg.addEventListener 'load', onLoad
-    sourceImg.addEventListener 'load', onLoad
-    lgtmImg.addEventListener 'error', onError
-    sourceImg.addEventListener 'error', onError
-    lgtmImg.src = chrome.extension.getURL(LGTM_IMG)
-    sourceImg.src = url
-
-  load.then (data)->
-    source = data.source
-    lgtm = data.lgtm
-    canvas = document.createElement('canvas')
-    sw = source.naturalWidth
-    sh = source.naturalHeight
-    lw = lgtm.naturalWidth
-    lh = lgtm.naturalHeight
-    return if sw is 0 or sh is 0
-    if sw > sh
-      w = Math.min(sw, lw)
-      h = sh * (w / sw)
-      oh = h
-      ow = lw * (h / lh)
-    else
-      h = Math.min(sh, lh)
-      w = sw * (h / sh)
-      ow = w
-      oh = lh * (w / lw)
-    canvas.width = w
-    canvas.height = h
-    context = canvas.getContext('2d')
-    context.drawImage(source, 0, 0, sw, sh, 0, 0,  w,h)
-    context.drawImage(lgtm, 0, 0, lw, lh,  (w / 2 - ow / 2), (h / 2 - oh / 2), ow ,oh)
-    chrome.tabs.create(url: canvas.toDataURL(), active: false)
-  ,(e)-> console.log e
+# imageStore = require('./stores/image_store')
+# imageStore.on Consts.EVENTS.STORE_ADD, (data)->
+#   chrome.tabs.create(url: data.url, active: false)
 
 chrome.runtime.onMessage.addListener (request, sender, sendResponse)->
   switch request?.type
     when 'lgtm'
-      createLGTM(request.dataURL)
+      actions.lgtm(request.dataURL)
     when 'capture'
-      chrome.tabs.create(url: request.dataURL, active: false)
+      actions.capture(request.dataURL)
 
 loadVideoFromContextMenu = (info, tab, callback)->
   chrome.tabs.sendMessage tab.id,
@@ -71,24 +35,34 @@ MENU_ITEM_FIND_LGTM = 'findVideoAndLgtmize'
 MENU_ITEM_FIND_CAPTURE = 'findVideoAndCaputre'
 MENU_ITEM_LGTM = 'lgtmize'
 MENU_ITEM_CAPTURE = 'capture'
+MENU_ITEM_OPEN_ALBUM = 'openalbum'
 
 chrome.contextMenus.onClicked.addListener (info, tab)->
   switch info.menuItemId
     when MENU_ITEM_FIND_LGTM
       findVideoFromContextMenu info, tab, (url)->
-        createLGTM(url)
+        actions.lgtm(url)
+
     when MENU_ITEM_FIND_CAPTURE
       findVideoFromContextMenu info, tab, (url)->
-        chrome.tabs.create(url: url, active: false)
+        actions.capture(url)
+
     when MENU_ITEM_LGTM
       if info.mediaType is 'video'
         loadVideoFromContextMenu info, tab, (url)->
-          createLGTM(url)
+          actions.lgtm(url)
       else
-        createLGTM(info.srcUrl)
+        actions.lgtm(info.srcUrl)
+
     when MENU_ITEM_CAPTURE
-      loadVideoFromContextMenu info, tab, (url)->
-        chrome.tabs.create(url: url, active: false)
+      if info.mediaType is 'video'
+        loadVideoFromContextMenu info, tab, (url)->
+          actions.capture(url)
+      else
+        actions.capture(info.srcUrl)
+
+    when MENU_ITEM_OPEN_ALBUM
+      chrome.tabs.create(url: chrome.extension.getURL(ALBUM_HTML))
 
 chrome.runtime.onInstalled.addListener ->
   parent = chrome.contextMenus.create
@@ -98,16 +72,16 @@ chrome.runtime.onInstalled.addListener ->
     id: 'parent'
   chrome.contextMenus.create
     type: 'normal'
-    title: 'Capture Image'
-    contexts: ['video']
-    parentId: parent
-    id: MENU_ITEM_CAPTURE
-  chrome.contextMenus.create
-    type: 'normal'
     title: 'LGTMize'
     contexts: ['video','image']
     parentId: parent
     id: MENU_ITEM_LGTM
+  chrome.contextMenus.create
+    type: 'normal'
+    title: 'Capture As LGTM'
+    contexts: ['video', 'image']
+    parentId: parent
+    id: MENU_ITEM_CAPTURE
   chrome.contextMenus.create
     type: 'normal'
     title: 'Find Video and LGTMize'
@@ -120,3 +94,9 @@ chrome.runtime.onInstalled.addListener ->
     contexts: ['all']
     parentId: parent
     id: MENU_ITEM_FIND_CAPTURE
+  chrome.contextMenus.create
+    type: 'normal'
+    title: 'Open Album'
+    contexts: ['all']
+    parentId: parent
+    id: MENU_ITEM_OPEN_ALBUM

@@ -3,6 +3,7 @@
 node_modules
 app/js
 app/manifest.json
+app/html
 tmp/
 
 
