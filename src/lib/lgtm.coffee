@@ -31,13 +31,11 @@ lgtm =
       if sw > sh
         w = Math.min(sw, lw)
         h = sh * (w / sw)
-        oh = h
-        ow = lw * (h / lh)
       else
         h = Math.min(sh, lh)
         w = sw * (h / sh)
-        ow = w
-        oh = lh * (w / lw)
+      ow = w
+      oh = lh * (w / lw)
       canvas.width = w
       canvas.height = h
       context = canvas.getContext('2d')
