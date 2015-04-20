@@ -52,5 +52,19 @@ exports =
         arr.push result.value
         result.continue()
 
+  removeFile: (data, callback)->
+    handleDB ->
+      FileSystem.removeFile data.fileName, ->
+        tx = db.transaction([IMAGE_OBJECT_STORE], 'readwrite')
+        store = tx.objectStore(IMAGE_OBJECT_STORE)
+        req = store.delete(data.id)
+        tx.oncomplete = (e)->
+          callback()
+
+  loadImageSrc: (data, callback)->
+    FileSystem.getFileUrl data.fileName, (url)->
+      data.url = url
+      callback(data, url)
+
 module.exports = exports
 

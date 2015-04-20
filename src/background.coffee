@@ -1,9 +1,7 @@
 LGTM_IMG = 'img/lgtm.png'
 ALBUM_HTML = 'html/album.html'
 Consts = require './consts'
-fileSystem = require('./lib/file_system')
-dispatcher = require('./dispatchers/dispatcher')
-actions = require('./actions/background_actions')
+Actions = require('./actions/common')
 
 # imageStore = require('./stores/image_store')
 # imageStore.on Consts.EVENTS.STORE_ADD, (data)->
@@ -12,9 +10,9 @@ actions = require('./actions/background_actions')
 chrome.runtime.onMessage.addListener (request, sender, sendResponse)->
   switch request?.type
     when 'lgtm'
-      actions.lgtm(request.dataURL)
+      Actions.lgtm(request.dataURL)
     when 'capture'
-      actions.capture(request.dataURL)
+      Actions.capture(request.dataURL)
 
 loadVideoFromContextMenu = (info, tab, callback)->
   chrome.tabs.sendMessage tab.id,
@@ -41,25 +39,25 @@ chrome.contextMenus.onClicked.addListener (info, tab)->
   switch info.menuItemId
     when MENU_ITEM_FIND_LGTM
       findVideoFromContextMenu info, tab, (url)->
-        actions.lgtm(url)
+        Actions.lgtm(url)
 
     when MENU_ITEM_FIND_CAPTURE
       findVideoFromContextMenu info, tab, (url)->
-        actions.capture(url)
+        Actions.capture(url)
 
     when MENU_ITEM_LGTM
       if info.mediaType is 'video'
         loadVideoFromContextMenu info, tab, (url)->
-          actions.lgtm(url)
+          Actions.lgtm(url)
       else
-        actions.lgtm(info.srcUrl)
+        Actions.lgtm(info.srcUrl)
 
     when MENU_ITEM_CAPTURE
       if info.mediaType is 'video'
         loadVideoFromContextMenu info, tab, (url)->
-          actions.capture(url)
+          Actions.capture(url)
       else
-        actions.capture(info.srcUrl)
+        Actions.capture(info.srcUrl)
 
     when MENU_ITEM_OPEN_ALBUM
       chrome.tabs.create(url: chrome.extension.getURL(ALBUM_HTML))

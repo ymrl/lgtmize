@@ -40,4 +40,10 @@ exports =
     exports.getFileEntries (entries)->
       callback(entries.map((e)->e.toURL()))
 
+  removeFile: (path, callback)->
+    exports.getFileSystem (fs)->
+      fs.root.getFile path, {create: false}, (fileEntry)->
+        fileEntry.remove ->
+          callback()
+
 module.exports = exports

@@ -9,20 +9,27 @@
         float: left;
         margin: 4px;
         height: 160px;
-        width: 160px;
         overflow: hidden;
         text-align: center;
         position: relative;
         background: #000;
       }
-      .image-wrapper {
-      }
       .album-image img {
         height: 160px;
       }
-      .album-image img.portlait {
-        height: auto;
-        width: 160px;
+      .album-image .substitute {
+        max-width: 160px;
+      }
+      .detail-modal-content {
+        position: relative;
+      }
+      .detail-modal-content .controls {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+      .detail-image img {
+        max-height: 100%;
       }
     </style>
   </head>

@@ -5,6 +5,8 @@ Consts =
     CREATED: 'created'
     STORE_ADD: 'storeAdd'
     UPDATE_FILE: 'updateFile'
+    DELETE_FILE: 'deleteFile'
+    STORE_DELETE: 'storeDelete'
 
 
 module.exports = Consts

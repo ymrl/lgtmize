@@ -30,6 +30,13 @@ dispatcher.register (payload)->
         e[key] = val for key, val of data
         e
       ImageStore.emit(Consts.EVENTS.STORE_UPDATE, result)
+      return true
+
+    when Consts.EVENTS.DELETE_FILE
+      data = payload.action.data
+      _files = _files.filter((e)-> e.id isnt data.id)
+      ImageStore.emit(Consts.EVENTS.STORE_DELETE, data)
+      return true
 
     else
       return true
