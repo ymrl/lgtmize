@@ -4,7 +4,8 @@ var gulp       = require('gulp'),
     cjsx       = require('gulp-cjsx'),
     es         = require('event-stream'),
     browserify = require('browserify'),
-    source     = require('vinyl-source-stream');
+    source     = require('vinyl-source-stream'),
+    zip        = require('gulp-zip');
 
 var BUILD_FILES = [
   'content.js',
@@ -46,6 +47,12 @@ gulp.task('browserify', ['coffee', 'cjsx'], function(){
 gulp.task('manifest', function(){
   return gulp.src('src/manifest.json')
     .pipe(gulp.dest('app/'));
+});
+
+gulp.task('zip', ['build'], function(){
+  return gulp.src('app/**/*')
+    .pipe(zip('lgtmize.zip'))
+    .pipe(gulp.dest('build'));
 });
 
 gulp.task('build', ['browserify', 'manifest', 'html']);

@@ -1,11 +1,8 @@
 {
-  // Required
   "manifest_version": 2,
   "name": "LGTMize",
   "version": "0.0.1",
 
-  // Recommended
-  //"default_locale": "ja",
   "description": "Create Image from playing video",
   "icons": {
     "16": "img/icon-16.png",
@@ -14,10 +11,8 @@
     "128": "img/icon-128.png"
   },
 
-  // Optional
   "author": "ymrl",
   "background": {
-    // Recommended
     "persistent": false,
     "scripts": ["js/background.js"]
   },
