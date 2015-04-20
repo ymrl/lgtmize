@@ -7,6 +7,8 @@ Consts =
     UPDATE_FILE: 'updateFile'
     DELETE_FILE: 'deleteFile'
     STORE_DELETE: 'storeDelete'
+  MESSAGES:
+    CREATED: 'created'
 
 
 module.exports = Consts

@@ -1,11 +1,25 @@
 LGTM_IMG = 'img/lgtm.png'
 ALBUM_HTML = 'html/album.html'
+ICON_IMG = 'img/icon-128.png'
 Consts = require './consts'
 Actions = require('./actions/common')
+ImageStore = require('./stores/image_store')
 
-# imageStore = require('./stores/image_store')
-# imageStore.on Consts.EVENTS.STORE_ADD, (data)->
-#   chrome.tabs.create(url: data.url, active: false)
+ImageStore.on Consts.EVENTS.STORE_ADD, (data)->
+  chrome.notifications.create
+    title: "Image Saved"
+    message: "It can be seen in Album Page"
+    imageUrl: data.url
+    iconUrl: chrome.extension.getURL(ICON_IMG)
+    type: 'image'
+
+  chrome.tabs.query {url: chrome.extension.getURL(ALBUM_HTML)}, (result)->
+    if result.length is 0
+      chrome.tabs.create(url: chrome.extension.getURL(ALBUM_HTML), active: false)
+    else
+      for tab in result
+        chrome.tabs.sendMessage tab.id,
+          type: Consts.MESSAGES.CREATED
 
 chrome.runtime.onMessage.addListener (request, sender, sendResponse)->
   switch request?.type
@@ -34,6 +48,9 @@ MENU_ITEM_FIND_CAPTURE = 'findVideoAndCaputre'
 MENU_ITEM_LGTM = 'lgtmize'
 MENU_ITEM_CAPTURE = 'capture'
 MENU_ITEM_OPEN_ALBUM = 'openalbum'
+
+chrome.notifications.onClicked.addListener ->
+  chrome.tabs.create(url: chrome.extension.getURL(ALBUM_HTML), active: true)
 
 chrome.contextMenus.onClicked.addListener (info, tab)->
   switch info.menuItemId
