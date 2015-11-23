@@ -59,7 +59,7 @@ gulp.task('zip', ['build'], function(){
 gulp.task('build', ['browserify', 'manifest', 'html']);
 gulp.task('watch', ['build'], function(){
   gulp.watch('src/**/*.coffee', ['browserify']);
-  gulp.watch('src/**/*.es6', ['browserify']);
+  gulp.watch('src/**/*.js', ['browserify']);
   gulp.watch('src/manifest.json', ['manifest']);
   gulp.watch('src/**/*.html', ['html']);
 });

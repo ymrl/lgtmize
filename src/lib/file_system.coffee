@@ -4,7 +4,7 @@ fileSystem = null
 SIZE = 10 * 1024 * 1024
 
 createFileName = (data)->
-  return md5(data)
+  return "#{md5(data)}_#{(new Date()).getTime()}"
 
 exports =
   getFileSystem: (callback)->

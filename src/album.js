@@ -11,7 +11,7 @@ Modal.injectCSS();
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
   if(request.type === Consts.MESSAGES.CREATED){
-    Actions.read();
+    Actions.loadOlder();
   }
 });
 React.render(React.createElement(AlbumViewer, null), mainElement);
