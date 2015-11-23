@@ -1,5 +1,5 @@
 EventEmitter = require('events').EventEmitter
-Consts = require('../consts')
+Consts = require('../consts').default
 assign = require('object-assign')
 dispatcher = require('../dispatchers/dispatcher')
 

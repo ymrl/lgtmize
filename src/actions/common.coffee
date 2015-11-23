@@ -1,4 +1,4 @@
-Consts = require('../consts')
+Consts = require('../consts').default
 dispatcher = require('../dispatchers/dispatcher')
 lgtm = require('../lib/lgtm')
 createLGTM = lgtm.createLGTM
