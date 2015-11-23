@@ -5,9 +5,16 @@ dispatcher = require('../dispatchers/dispatcher')
 
 
 _files = []
+_oldestFile = null
+_newestFile = null
 ImageStore = assign {}, EventEmitter.prototype,
   getFiles: ->
     return _files
+  getOldest: ->
+    return _oldestFile
+  getNewest: ->
+    return _newestFile
+
 
 dispatcher.register (payload)->
   actionType = payload.action.actionType
@@ -21,6 +28,16 @@ dispatcher.register (payload)->
 
     when Consts.EVENTS.READ_FILES
       _files = payload.action.files
+      ImageStore.emit(Consts.EVENTS.STORE_LOAD)
+      return true
+
+    when Consts.EVENTS.READ_NEWEST_FILE
+      _newestFile = payload.action.file
+      ImageStore.emit(Consts.EVENTS.STORE_LOAD)
+      return true
+
+    when Consts.EVENTS.READ_OLDEST_FILE
+      _oldestFile = payload.action.file
       ImageStore.emit(Consts.EVENTS.STORE_LOAD)
       return true
 

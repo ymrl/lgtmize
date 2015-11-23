@@ -12,14 +12,18 @@ var AlbumViewer = React.createClass({
     return {
       files: [],
       modalOpen: false,
-      file: null
+      file: null,
+      oldest: null,
+      newest: null
     };
   },
   componentDidMount: function componentDidMount() {
     ImageStore.on(Consts.EVENTS.STORE_LOAD, this.onStoreLoad);
     ImageStore.on(Consts.EVENTS.STORE_UPDATE, this.onUpdateFile);
     ImageStore.on(Consts.EVENTS.STORE_DELETE, this.onDeleteFile);
-    return Actions.read();
+    Actions.loadOlder();
+    Actions.loadOldest();
+    Actions.loadNewest();
   },
   componentWillUnmount: function componentWillUnmount() {
     ImageStore.removeListener(Consts.EVENTS.STORE_LOAD, this.onStoreLoad);
@@ -27,8 +31,10 @@ var AlbumViewer = React.createClass({
     return ImageStore.removeListener(Consts.EVENTS.STORE_DELETE, this.onDeleteFile);
   },
   onStoreLoad: function onStoreLoad() {
-    return this.setState({
-      files: ImageStore.getFiles()
+     this.setState({
+      files: ImageStore.getFiles(),
+      oldest: ImageStore.getOldest(),
+      newest: ImageStore.getNewest()
     });
   },
   onUpdateFile: function onUpdateFile() {
@@ -66,29 +72,49 @@ var AlbumViewer = React.createClass({
       file: file
     });
   },
+  loadOlder: function(){
+    var len = this.state.files.length;
+    if(len > 0){
+      Actions.loadOlder(this.state.files[len - 1].timestamp);
+    }else {
+      Actions.loadOlder();
+    }
+  },
+  loadNewer: function(){
+    var len = this.state.files.length;
+    if(len > 0){
+      Actions.loadNewer(this.state.files[0].timestamp);
+    }else {
+      Actions.loadOlder();
+    }
+  },
   render: function render() {
-    var imageNodes;
-    imageNodes = this.state.files.sort( (a, b) => {
-      return b.timestamp - a.timestamp;
-    }).map( (file) => {
+    var imageNodes = this.state.files.map((file) => {
       return <AlbumImage
+        key={file.id}
         file={file}
         onClick={this.handleClick}
       />
     });
-
-    return <section className="image-list">
-      {imageNodes}
-      <Modal isOpen={this.state.modalOpen} >
-        <div className="detail-modal-content">
-          <div className="controls">
-            <button className="remove-button" onClick={this.handleRemoveImage} tabIndex="-1">Remove</button>
-            <button className="close-button" onClick={this.handleCloseDetail}>Close</button>
+    var newerExist = this.state.newest && this.state.files[0] && this.state.newest.timestamp > this.state.files[0].timestamp;
+    var olderExist = this.state.oldest && this.state.files[this.state.files.length -1] &&
+      this.state.oldest.timestamp < this.state.files[this.state.files.length -1].timestamp;
+    return <div>
+      <button onClick={this.loadNewer} disabled={!newerExist}>Newer</button>
+      <button onClick={this.loadOlder} disabled={!olderExist}>Older</button>
+      <section className="image-list">
+        {imageNodes}
+        <Modal isOpen={this.state.modalOpen} >
+          <div className="detail-modal-content">
+            <div className="controls">
+              <button className="remove-button" onClick={this.handleRemoveImage} tabIndex="-1">Remove</button>
+              <button className="close-button" onClick={this.handleCloseDetail}>Close</button>
+            </div>
+            <ImageDetail file={this.state.file} />
           </div>
-          <ImageDetail file={this.state.file} />
-        </div>
-      </Modal>
-    </section>;
+        </Modal>
+      </section>
+    </div>;
   }
 });
 export default AlbumViewer;
