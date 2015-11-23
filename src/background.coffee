@@ -1,7 +1,7 @@
 LGTM_IMG = 'img/lgtm.png'
 ALBUM_HTML = 'html/album.html'
 ICON_IMG = 'img/icon-128.png'
-Consts = require './consts'
+Consts = require('./consts').default
 Actions = require('./actions/common')
 ImageStore = require('./stores/image_store')
 
