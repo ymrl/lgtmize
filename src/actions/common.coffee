@@ -14,11 +14,11 @@ actions =
           files: files
 
   loadNewer: (newerThan=null, limit=15)->
-    storage.loadNewerFiles newerThan, limit, 'prev', (files)->
+    storage.loadNewerFiles newerThan, limit, 'next', (files)->
       dispatcher.dispatch
         action:
           actionType: Consts.EVENTS.READ_FILES
-          files: files
+          files: files.reverse()
 
   loadOldest: ->
     storage.loadNewerFiles 0, 1, 'next', (files)->
