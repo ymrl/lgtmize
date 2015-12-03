@@ -1,6 +1,6 @@
 {
   "name": "LGTMize",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "description": "LGTMize Chrome Extension",
   "scripts": {
     "build": "gulp build",
