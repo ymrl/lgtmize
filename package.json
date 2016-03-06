@@ -22,8 +22,9 @@
     "gulp-coffee": "^2.3.1",
     "gulp-zip": "^3.0.2",
     "object-assign": "^2.0.0",
-    "react": "^0.13.2",
-    "react-modal": "^0.1.1",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "react-modal": "^0.6.1",
     "reactify": "^1.1.0",
     "vinyl-source-stream": "^1.1.0"
   }
