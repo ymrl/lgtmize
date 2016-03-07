@@ -1,17 +1,21 @@
 import React from  'react';
-import AlbumViewer from './components/album_viewer';
+import ReactDOM from 'react-dom'
 import Modal from 'react-modal';
 import Consts from './consts';
 import Actions from './actions/common';
+import AlbumContainer from './containers/album_container';
 
 var mainElement = document.querySelector('.main')
 
 Modal.setAppElement(mainElement);
-Modal.injectCSS();
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
   if(request.type === Consts.MESSAGES.CREATED){
     Actions.loadOlder();
   }
 });
-React.render(React.createElement(AlbumViewer, null), mainElement);
+
+ReactDOM.render(React.createElement(AlbumContainer), mainElement);
+Actions.loadOlder();
+Actions.loadOldest();
+Actions.loadNewest();
