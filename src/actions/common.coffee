@@ -9,62 +9,54 @@ actions =
   loadOlder: (olderThan=null, limit=15)->
     storage.loadOlderFiles olderThan, limit, 'prev', (files)->
       dispatcher.dispatch
-        action:
-          actionType: Consts.EVENTS.READ_FILES
-          files: files
+        actionType: Consts.EVENTS.READ_FILES
+        files: files
 
   loadNewer: (newerThan=null, limit=15)->
     storage.loadNewerFiles newerThan, limit, 'next', (files)->
       dispatcher.dispatch
-        action:
-          actionType: Consts.EVENTS.READ_FILES
-          files: files.reverse()
+        actionType: Consts.EVENTS.READ_FILES
+        files: files.reverse()
 
   loadOldest: ->
     storage.loadNewerFiles 0, 1, 'next', (files)->
       dispatcher.dispatch
-        action:
-          actionType: Consts.EVENTS.READ_OLDEST_FILE
-          file: files[0]
+        actionType: Consts.EVENTS.READ_OLDEST_FILE
+        file: files[0]
 
   loadNewest: ->
     storage.loadOlderFiles (100000000 * 24 * 60 * 60 * 1000), 1, 'prev', (files)->
       dispatcher.dispatch
-        action:
-          actionType: Consts.EVENTS.READ_NEWEST_FILE
-          file: files[0]
+        actionType: Consts.EVENTS.READ_NEWEST_FILE
+        file: files[0]
 
   loadImageSrc: (data)->
     storage.loadImageSrc data, (d,url)->
       dispatcher.dispatch
-        action:
-          actionType: Consts.EVENTS.UPDATE_FILE
-          url: url
-          data: d
+        actionType: Consts.EVENTS.UPDATE_FILE
+        url: url
+        data: d
 
   removeImage: (data)->
     storage.removeFile data, ->
       dispatcher.dispatch
-        action:
-          actionType: Consts.EVENTS.DELETE_FILE
-          data: data
+        actionType: Consts.EVENTS.DELETE_FILE
+        data: data
 
   lgtm: (url)->
     createLGTM url, (data)->
       storage.saveImage data,(record)->
         dispatcher.dispatch
-          action:
-            actionType: Consts.EVENTS.CREATED
-            data: record
-            url: data.url
+          actionType: Consts.EVENTS.CREATED
+          data: record
+          url: data.url
 
   capture: (url)->
     imageToDataURL url, (data)->
       storage.saveImage data,(record)->
         dispatcher.dispatch
-          action:
-            actionType: Consts.EVENTS.CREATED
-            data: record
-            url: data.url
+          actionType: Consts.EVENTS.CREATED
+          data: record
+          url: data.url
 
 module.exports = actions
